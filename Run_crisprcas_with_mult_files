@@ -1,0 +1,44 @@
+#!/bin/bash                                                                                                                                                                                               
+                                                                    
+
+#use the current working directory and current modules                                                                                                                                                                                                                        
+#$ -cwd -b y -l mem_free=64G -P jravel-lab -q all.q -N crispr_array -j y -o /local/scratch/aibraheem/Mult_runs/logs -e /local/scratch/aibraheem/Mult_runs/logs                                                                                                                                    
+
+#current directory                                                                                                                                                                                                                                                            
+#cd /local/scratch/aibraheem/                                                                                                                                                                                                                                                 
+
+#initialize conda                                                                                                                                                                                                                                                             
+source /usr/local/packages/miniconda3/etc/profile.d/conda.sh
+
+#conda activate                                                                                                                                                                                                                                                               
+conda activate /usr/local/packages/miniconda3/envs/crisprcasfinder
+
+#txt with the name of samples                                                                                                                                                                                                                                                 
+SAMPLE_LIST=$1
+
+#directory where the actual samples are located                                                                                                                                                                                                                               
+SAMPLE_DIR="/local/scratch/aibraheem/Datasample_symlinks"
+
+#moving the crisprcasfinder results to this directory                                                                                                                                                                                                                         
+RESULT_DIR="/local/scratch/aibraheem/Mult_runs/CrisprResults"
+
+
+#iterarte through each file                                                                                                                                                                                                                                                   
+while read -r sample;do
+    #print sample name                                                                                                                                                                                                                                                        
+    echo ${sample}.fa
+
+    #run the tool                                                                                                                                                                                                                                                             
+    perl /usr/local/packages/crisprcasfinder-4.3.2/CRISPRCasFinder.pl -in ${SAMPLE_DIR}/${sample}.fa -out "${sample}.fa" -so /usr/local/packages/crisprcasfinder-4.3.2/sel392v2.so -cas -rcfowce
+
+    #checks if each sample has directory result                                                                                                                                                                                                                               
+    if [ -d "${sample}.fa" ]; then
+
+        echo "Directory found: ${sample}.fa"                                                                                                                                                                                                                                 
+
+        #move the directories to result directory                                                                                                                                                                                                                             
+        mv "${sample}.fa/" "$RESULT_DIR/"                                                                                                                                                                                                                                    
+    else                                                                                                                                                                                                                                                                     
+        echo "Directory not found for sample: ${sample}"                                                                                                                                                                                                                     
+
+    fi                                                                                                                                                                                                    :
