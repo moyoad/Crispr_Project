@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#$ -cwd -b y -l mem_free=64G -P jravel-lab -q all.q -N crispr_array -j y -o /local/scratch/aibraheem/Mult_runs/logs -e /local/scratch/aibraheem/Mult_runs/logs
+
+
+SOURCE_DIR="/local/scratch/aibraheem/Mult_runs/CrisprResults"
+
+JSON_DIR="/local/scratch/aibraheem/Mult_runs/JSON_FILES"
+
+find "$SOURCE_DIR" -mindepth 2 -maxdepth 2 -type f -name "result.json" | while read -r file; do
+
+    #get direcctory name
+    dir_name=$(basename "$(dirname "$file")")
+
+    #rename the json file with the dirname and placing in json file dir
+    dest_file="$JSON_DIR/${dir_name}.json"
+
+    #copy each file
+
+    cp "$file" "$dest_file"
+
+    echo "copied and renamed: $file to $dest_file"
+
+done
+
+
+
+
