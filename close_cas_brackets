@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#use the current working directory and current modules
+
+#$ -b y -l mem_free=64G -P jravel-lab -q all.q -N crispr_array  -j y -o /local/scratch/aibraheem/Mult_runs/logs -e /local/scratch/aibraheem/Mult_runs/logs
+
+cd /local/scratch/aibraheem/Mult_runs/JSON_FILES/
+
+grep -Pl '"Cas":\[\s*$' *json  | xargs perl -i  -pe 's{"Cas":\[\s*$}{"Cas": []\n}g'
+run_grep.sh (END)
