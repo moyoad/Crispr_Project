@@ -1,0 +1,25 @@
+#!/bin/bash
+> base_names2.txt
+#use the current working directory and current modules
+#$ -b y -l mem_free=64G -P jravel-lab -q all.q -N crispr_array -j y -o /local/scratch/aibraheem/logs -e /local/scratch/aibraheem/logs                                                                              
+#current directory/scratch/aibraheem/Datasample_symlinks"
+cd /local/scratch/aibraheem/Datasample_symlinks
+for symlink in *.fa;do
+> base_names2.txt
+    
+#directory where the actual samples are located                                                                                                               
+SAMPLE_DIR="/local/scratch/aibraheem/Datasample_symlinks"
+    echo "$base_names" >> base_names2.txt
+for symlink in *.fa;do
+    
+    ing_fasta_file_names.sh
+    base_names=$(basename "$resl_files" .fa)
+
+    echo "$base_names" >> base_names2.txt
+
+done
+
+mv /local/scratch/aibraheem/Datasample_symlink/base_names2.txt  /local/scratch/aibraheem/
+
+echo "Base names extracted from symlinks and saved to base_names.txt2 and it has been moved"
+
