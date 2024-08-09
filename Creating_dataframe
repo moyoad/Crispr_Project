@@ -1,0 +1,103 @@
+import os
+
+json_list = []
+
+directory_path = "/local/scratch/aibraheem/Mult_runs/JSON_FILES"
+
+for elt in os.listdir(directory_path):#iterating through each file in the directory
+    print(elt)
+    if elt.split(".")[-1] == "json": #split the files on . and chesks if the files end with json
+        full_path = os.path.join(directory_path,elt)
+        #print(full_path)
+        json_list.append(full_path) #appends to the files to json list that end with json to json lsit
+        
+the_dict = []
+count = 0
+for full_path in json_list : #for each file in json list
+    print(full_path)
+    count = count + 1
+    print(count)
+    with open(full_path, 'r') as f:
+        data = json.load(f) #loading each file
+        #print(data) #prints each information in each file
+        base_name = os.path.splitext(os.path.basename(full_path))[0]
+        #print(base_name)#prints each information in each file
+        parts = base_name.split('.')
+        if len(parts) == 3:
+            sample_id = parts[0]
+            bin_num = parts[1]
+        sequence = data['Sequences']
+        for seq in sequence:
+            crispr_arry = seq['Crisprs']
+            cas_gene = seq['Cas']
+            #handling crispr array information
+            if crispr_arry:
+                for cri in crispr_arry:
+                    for reg in cri['Regions']:
+                        the_dict.append({
+                            'Fasta_file': base_name,
+                            'Sample_Id': sample_id,
+                            'Bin_number': bin_num,
+                            'Sequence_Id': seq['Id'],
+                            'Number of crisprs': len(crispr_arry),
+                            'Crisprs Id': cri['Name'],
+                            'Crispr start': cri['Start'],
+                            'Crispr End': cri['End'],
+                            'Repeat_consensus': cri['DR_Consensus'],
+                            'Number of spacers': cri['Spacers'],
+                            'Evidence_level': cri['Evidence_Level'],
+                            'Region': reg['Type'],
+                            'Region_start': reg['Start'],
+                            'Region_end': reg['End'],
+                            'Region_Sequence': reg['Sequence'],
+                            'Number_of_Cas': len(cas_gene),
+                            'Cas_Type': 'None',
+                            'Cas_Type_Start': 'None',
+                            'Cas_Type_End': 'None',
+                            'Number_of_Genes': 'None',
+                            'Cas_Subtype': 'None',
+                            'Cas_SubType_Start': 'None',
+                            'Cas_SubType_End': 'None'  
+                        })
+            if cas_gene:
+               for cas in cas_gene:
+                                  gene_type = cas['Genes']
+                                  for gene in gene_type:
+                                      #print(gene['Sub_type'])
+                                      the_dict.append({
+                                          'Fasta_file': base_name,
+                                          'Sample_Id': sample_id,
+                                          'Bin_number': bin_num,
+                                          'Sequence_Id': seq['Id'],
+                                          'Number of crisprs': len(crispr_arry),
+                                          'Crisprs Id': cri['Name'],
+                                          'Crispr start': cri['Start'],
+                                          'Crispr End': cri['End'],
+                                          'Repeat_consensus': cri['DR_Consensus'],
+                                          'Number of spacers': cri['Spacers'],
+                                          'Evidence_level': cri['Evidence_Level'],
+                                          'Region': reg['Type'],
+                                          'Region_start': reg['Start'],
+                                          'Region_end': reg['End'],
+                                          'Region_Sequence': reg['Sequence'],
+                                          'Number_of_Cas': len(cas_gene),
+                                          'Cas_Type': cas['Type'],
+                                          'Cas_Type_Start': cas['Start'],
+                                          'Cas_Type_End': cas['End'],
+                                          'Number_of_Genes': len(gene_type),
+                                          'Cas_Subtype': gene['Sub_type'],
+                                          'Cas_SubType_Start': gene['Start'],
+                                          'Cas_SubType_End': gene['End']
+                                      })
+                        
+                        
+                
+the_dict_df = pd.DataFrame(the_dict)
+ 
+#pd.set_option('display.max_rows', None)
+
+#pd.set_option('display.max_columns', None)
+
+the_dict_df.to_csv('Crispr_array.csv', index = False)
+
+
